@@ -6,32 +6,20 @@ import random
 
 random.seed(121)
 np.random.seed(191)
-env = Maze()
-MC = MCLearningBasic(actions=list(range(env.n_actions)))
+env = Maze()  # 初始化环境
+MC = MCLearningBasic(actions=list(range(env.n_actions)))  # 初始化MC训练器
 rewards_table = []
 episode_num = 200  # 大循环次数
 for episode in range(episode_num):
-    # if episode == 0:
-    #     for i in range(3):
-    #         if i == 0:
-    #             state = env.reset_in_state([85, 165, 115, 195])
-    #             MC.learn(state)
-    #         elif i == 1:
-    #             state = env.reset_in_state([125, 165, 155, 195])
-    #             MC.learn(state)
-    #         else:
-    #             state = env.reset()
-    #             MC.learn(state)
-    # 初始化环境，得到初始状态
-    state = env.reset()
-    step_counter = 0
-    rewards_show = 0
+    state = env.reset()  # 初始化环境，得到初始状态
+    step_counter = 0  # 每个episode的计数器
+    rewards_show = 0  # 回报绘图用
     one_episode_state = []
     while True:
         # 更新可视化环境
         # env.render()
 
-        #记录一次episode的state
+        # 记录一次episode的state
         one_episode_state.append(state)
 
         # 选择动作
@@ -42,10 +30,6 @@ for episode in range(episode_num):
 
         # 可视化reward累加
         rewards_show += reward
-
-        # if not done:
-        #     # 蒙特卡洛训练，针对当前state穷举所有action的价值，比较得出q(s,a)最大的a
-        #     MC.learn(state)
 
         # 传入下一个状态
         state = state_
@@ -68,16 +52,11 @@ for episode in range(episode_num):
 # end of game
 print('game over')
 env.show_A_table(MC.A_table)  # 在maze的每个格子中显示最优动作的箭头
-env.mainloop()
+env.mainloop()  # 避免tkinter窗口自动关闭
 plt.plot(rewards_table)  # 出图
 plt.xlabel('index')
 plt.ylabel('reward')
-plt.title('Maze by MC-learning-basic')
-# 调整窗口分辨率
-# manager = plt.get_current_fig_manager()
-# manager.resize(*manager.window.maxsize())
+plt.title('Stochastic Maze by MC-learning-basic')
 plt.show()
 #np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
 # MC.show_table()
-
-# env.destroy()

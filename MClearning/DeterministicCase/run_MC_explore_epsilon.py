@@ -55,18 +55,15 @@ for episode in range(10000):
 
 # end of game
 print('game over')
-# plt.plot(rewards_table)
-# plt.xlabel('index')
-# plt.ylabel('reward')
-# plt.title('Maze by MC-learning-explore-epsilon')
 env.show_A_table(MC.A_table)  # 在maze的每个格子中显示最优动作的箭头
 env.mainloop()
-#  新建一个图
+# 出图
 plt.figure(2)
 reward_table_smooth = moving_average(rewards_table, 500)
 plt.plot(reward_table_smooth)
 plt.xlabel('index')
 plt.ylabel('reward_smooth')
-plt.title('Maze by MC-learning-explore-epsilon')
+plt.title('Deterministic Maze by MC-learning-explore-epsilon')
 plt.show()
-#np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
+# np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
+# MC.show_table()

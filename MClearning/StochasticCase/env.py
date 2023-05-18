@@ -19,8 +19,8 @@ class Maze(tk.Tk, object):
 
     def _build_maze(self):
         self.canvas = tk.Canvas(self, bg='white',
-                           height=MAZE_H * UNIT,
-                           width=MAZE_W * UNIT)
+                           height = MAZE_H * UNIT,
+                           width = MAZE_W * UNIT)
 
         # 划线
         for c in range(0, MAZE_W * UNIT, UNIT):
@@ -105,15 +105,15 @@ class Maze(tk.Tk, object):
 
     def reset(self):
         self.update()  # 更新画布
-        # time.sleep(0.5)  # 展示用，可以缩短时间训练
+        # time.sleep(0.5)  # 暂停
         self.canvas.delete(self.rect)  # 删除原来的rect
         origin = np.array([20 + random.randint(0, MAZE_H - 1) * UNIT,
                            20 + random.randint(0, MAZE_W - 1) * UNIT])  # reset出发点为任意一点
         hell_centers = [self.hell1_center, self.hell2_center, self.hell3_center, self.hell4_center, self.hell5_center, self.hell6_center]
-        while np.any(np.all(origin == hell_centers, axis=1)):
+        while np.any(np.all(origin == hell_centers, axis=1)):  # 初始点仅设置在安全的地方
             origin = np.array([20 + random.randint(0, MAZE_H - 1) * UNIT,
                                20 + random.randint(0, MAZE_W - 1) * UNIT])
-        self.rect = self.canvas.create_rectangle(
+        self.rect = self.canvas.create_oval(
             origin[0] - 15, origin[1] - 15,
             origin[0] + 15, origin[1] + 15,
             fill='red')
@@ -122,10 +122,10 @@ class Maze(tk.Tk, object):
 
     def reset_in_state(self, state):
         self.update()  # 更新画布
-        # time.sleep(0.5)  # 展示用，可以缩短时间训练
+        # time.sleep(0.5)  # 暂停
         self.canvas.delete(self.rect)  # 删除原来的rect
         origin = np.array([int(state[0]+15), int(state[1]+15)])  # reset出发点为固定点
-        self.rect = self.canvas.create_rectangle(
+        self.rect = self.canvas.create_oval(
             origin[0] - 15, origin[1] - 15,
             origin[0] + 15, origin[1] + 15,
             fill='red')
@@ -133,9 +133,9 @@ class Maze(tk.Tk, object):
         return self.canvas.coords(self.rect)
 
     def step(self, action):
-        s = self.canvas.coords(self.rect)  # 获取当前位置(状态)
+        s = self.canvas.coords(self.rect)  # 获取当前位置
         hit_wall = False  # 检测碰壁情况
-        base_action = np.array([0, 0])
+        base_action = np.array([0, 0])  # 移动量
         # 风场情况
         if s in [self.canvas.coords(self.wind1), self.canvas.coords(self.wind2),
                  self.canvas.coords(self.wind3), self.canvas.coords(self.wind4)]:  # 如果s在风场区域
@@ -149,7 +149,7 @@ class Maze(tk.Tk, object):
 
         # reward设置
         if s_ == self.canvas.coords(self.oval):
-            reward = 10  # 到达目标区域奖励为1
+            reward = 1  # 到达目标区域奖励为1
             done = True
             success = True
         elif s_ in [self.canvas.coords(self.hell1), self.canvas.coords(self.hell2), self.canvas.coords(self.hell3),
@@ -234,12 +234,12 @@ class Maze(tk.Tk, object):
 
         return base_action, hit_wall
 
-    def show_A_table(self, A_table):
+    def show_A_table(self, A_table):  # 将Atable里的动作可视化为迷宫格子里的箭头
         self.canvas.delete(self.rect)  # 删除原来的rect
         for index, row in A_table.iterrows():
-            action = A_table.loc[index].item()
-            state = eval(index)[:2]
-            origin = [int(state[0] + 15), int(state[1] + 15)]
+            action = A_table.loc[index].item()  # 获取action
+            state = eval(index)[:2]  # 字符串转数字获取state
+            origin = [int(state[0] + 15), int(state[1] + 15)]  # 获取位置中心点
             if int(action) == 0:
                 arrow_points_up = [
                     origin[0] + 0, origin[1] - 10,
@@ -295,21 +295,5 @@ class Maze(tk.Tk, object):
 
 
     def render(self):
-        time.sleep(0.001)
+        time.sleep(0.1)
         self.update()
-
-
-# def update():
-#     for t in range(10):
-#         s = env.reset()
-#         while True:
-#             env.render()
-#             a = 1
-#             s, r, done, success = env.step(a)
-#             if done:
-#                 break
-#
-# if __name__ == '__main__':
-#     env = Maze()
-#     # env.after(100, update)
-#     env.mainloop()

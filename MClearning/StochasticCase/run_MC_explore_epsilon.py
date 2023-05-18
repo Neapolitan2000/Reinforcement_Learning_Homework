@@ -7,8 +7,8 @@ import random
 
 random.seed(23)
 np.random.seed(23)
-env = Maze()
-MC = MCLearningExplore(actions=list(range(env.n_actions)), gamma=0.98, epsilon=0.9)
+env = Maze()  # 初始化环境
+MC = MCLearningExplore(actions=list(range(env.n_actions)), gamma=0.98, epsilon=0.9)  # 初始化MC训练器
 rewards_table = []
 for episode in range(10000):
     # 初始化环境，得到初始状态
@@ -55,18 +55,15 @@ for episode in range(10000):
 
 # end of game
 print('game over')
-# plt.plot(rewards_table)
-# plt.xlabel('index')
-# plt.ylabel('reward')
-# plt.title('Maze by MC-learning-explore-epsilon')
 env.show_A_table(MC.A_table)  # 在maze的每个格子中显示最优动作的箭头
-env.mainloop()
-#  新建一个图
+env.mainloop()  # 避免tkinter窗口自动关闭
+# 出图
 plt.figure(2)
 reward_table_smooth = moving_average(rewards_table, 500)
 plt.plot(reward_table_smooth)
 plt.xlabel('index')
 plt.ylabel('reward_smooth')
-plt.title('Maze by MC-learning-explore-epsilon')
+plt.title('Stochastic Maze by MC-learning-explore-epsilon')
 plt.show()
-#np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
+# np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
+# MC.show_table()

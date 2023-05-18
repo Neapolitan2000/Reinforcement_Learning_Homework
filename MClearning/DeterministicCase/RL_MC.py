@@ -19,9 +19,9 @@ class MCLearningBasic:
         self.env_in = Maze()  # 初始化环境
 
     def choose_action(self, state):
-        self.check_action_exist(str(state))  #  检查是否有该状态的行
+        self.check_action_exist(str(state))  # 检查是否有该状态的行
         self.check_state_exist(str(state))  # 检查是否有该状态的行
-        # 从A表中获取该状态的行，遵从epislon-greedy策略选择动作
+        # 从A表中获取该状态的行，遵从epsilon-greedy策略选择动作
         if random.random() < self.epsilon:
             # 从A表中获取该状态的行
             state_action = self.A_table.loc[str(state)]
@@ -52,14 +52,11 @@ class MCLearningBasic:
                 episodes.append([s, action, r])  # 记录一条轨迹上的数据对
                 s = s_
                 count += 1
-            # print(episodes)
-            # breakpoint()
             for i in range(len(episodes)-1, -1, -1):  # 从后往前遍历
                 self.G = self.gamma * self.G + episodes[i][2]  # 计算回报
             self.q_table.loc[str(state_out), action_out] = self.G  # 更新q表
         # 策略更新
         state_action = self.q_table.loc[str(state_out), :]  # 获取q表中该状态的行
-        # action = np.random.choice(state_action[state_action == np.max(state_action)].index)  # 从该状态的行中获取最大值的动作
         best_action = np.min(state_action[state_action == np.max(state_action)].index)  # 从该状态的行中获取最大值的动作的最小序列
         self.A_table.loc[str(state_out)] = int(best_action)  # 更新A表
 
@@ -84,14 +81,10 @@ class MCLearningBasic:
                 )
             )
 
-
-    def show_table(self, ):
+    def show_table(self):
         np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
         print('\rAtable\r', self.A_table)
         print('\rQtable:\r', self.q_table)
-        print(self.q_table.loc[str([85.0, 165.0, 115.0, 195.0]), :])
-        print(self.q_table.loc[str([125.0, 165.0, 155.0, 195.0]), :])
-        print(self.q_table.loc[str([165.0, 165.0, 195.0, 195.0]), :])
 
 class MCLearningExplore:
     def __init__(self, actions, gamma=0.98, epsilon=1):
@@ -103,9 +96,9 @@ class MCLearningExplore:
         self.A_table = pd.DataFrame(dtype=int)  # 初始化A表
 
     def choose_action(self, state):
-        self.check_action_exist(str(state))  #  检查是否有该状态的行
+        self.check_action_exist(str(state))  # 检查是否有该状态的行
         self.check_state_exist(str(state))  # 检查是否有该状态的行
-        # 从A表中获取该状态的行，遵从epislon-greedy策略选择动作
+        # 从A表中获取该状态的行，遵从epsilon-greedy策略选择动作
         if np.random.uniform() < self.epsilon:
             # 从A表中获取该状态的行
             state_action = self.A_table.loc[str(state)]
@@ -117,9 +110,7 @@ class MCLearningExplore:
         return action
 
     def learn(self, episodes):
-
-        # 初始化G
-        self.G = 0
+        self.G = 0  # 初始化G
         for i in range(len(episodes)-1, -1, -1):  # 从后往前遍历
             state = episodes[i][0]  # 获取状态
             action = episodes[i][1]  # 获取动作
@@ -166,11 +157,7 @@ class MCLearningExplore:
                 )
             )
 
-
-    def show_table(self, ):
+    def show_table(self):
         np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
-
-        print(self.A_table)
-        print(self.q_table.loc[str([85.0, 165.0, 115.0, 195.0]), :])
-        print(self.q_table.loc[str([125.0, 165.0, 155.0, 195.0]), :])
-        print(self.q_table.loc[str([165.0, 165.0, 195.0, 195.0]), :])
+        print('\rAtable\r', self.A_table)
+        print('\rQtable:\r', self.q_table)
