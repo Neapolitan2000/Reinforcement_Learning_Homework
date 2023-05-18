@@ -73,26 +73,26 @@ class Maze(tk.Tk, object):
             fill='blue')
 
         #风场区域
-        # wind_center1 = origin + np.array([UNIT * 3, UNIT * 1])
-        # self.wind1 = self.canvas.create_rectangle(
-        #     wind_center1[0] - 15, wind_center1[1] - 15,
-        #     wind_center1[0] + 15, wind_center1[1] + 15,
-        #     fill='green')
-        # wind_center2 = origin + np.array([UNIT * 4, UNIT * 1])
-        # self.wind2 = self.canvas.create_rectangle(
-        #     wind_center2[0] - 15, wind_center2[1] - 15,
-        #     wind_center2[0] + 15, wind_center2[1] + 15,
-        #     fill='green')
-        # wind_center3 = origin + np.array([UNIT * 4, UNIT * 2])
-        # self.wind3 = self.canvas.create_rectangle(
-        #     wind_center3[0] - 15, wind_center3[1] - 15,
-        #     wind_center3[0] + 15, wind_center3[1] + 15,
-        #     fill='green')
-        # wind_center4 = origin + np.array([UNIT * 3, UNIT * 2])
-        # self.wind4 = self.canvas.create_rectangle(
-        #     wind_center4[0] - 15, wind_center4[1] - 15,
-        #     wind_center4[0] + 15, wind_center4[1] + 15,
-        #     fill='green')
+        wind_center1 = origin + np.array([UNIT * 3, UNIT * 1])
+        self.wind1 = self.canvas.create_rectangle(
+            wind_center1[0] - 15, wind_center1[1] - 15,
+            wind_center1[0] + 15, wind_center1[1] + 15,
+            fill='green')
+        wind_center2 = origin + np.array([UNIT * 4, UNIT * 1])
+        self.wind2 = self.canvas.create_rectangle(
+            wind_center2[0] - 15, wind_center2[1] - 15,
+            wind_center2[0] + 15, wind_center2[1] + 15,
+            fill='green')
+        wind_center3 = origin + np.array([UNIT * 4, UNIT * 2])
+        self.wind3 = self.canvas.create_rectangle(
+            wind_center3[0] - 15, wind_center3[1] - 15,
+            wind_center3[0] + 15, wind_center3[1] + 15,
+            fill='green')
+        wind_center4 = origin + np.array([UNIT * 3, UNIT * 2])
+        self.wind4 = self.canvas.create_rectangle(
+            wind_center4[0] - 15, wind_center4[1] - 15,
+            wind_center4[0] + 15, wind_center4[1] + 15,
+            fill='green')
 
         # 运动体rect
         self.rect = self.canvas.create_oval(
@@ -136,16 +136,14 @@ class Maze(tk.Tk, object):
         s = self.canvas.coords(self.rect)  # 获取当前位置(状态)
         hit_wall = False  # 检测碰壁情况
         base_action = np.array([0, 0])
-        '''
+        # 风场情况
         if s in [self.canvas.coords(self.wind1), self.canvas.coords(self.wind2),
-                 self.canvas.coords(self.wind3), self.canvas.coords(self.wind4),]:  # 如果s在风场区域
+                 self.canvas.coords(self.wind3), self.canvas.coords(self.wind4)]:  # 如果s在风场区域
             base_action, hit_wall = self.move_stochastic(action, s, base_action, hit_wall)
         else:  # 如果在正常区域
             base_action, hit_wall = self.move_deterministic(action, s, base_action, hit_wall)
-        '''  # 风场情况
 
-        base_action, hit_wall = self.move_deterministic(action, s, base_action, hit_wall)  # 无风场情况
-        self.canvas.move(self.rect, base_action[0], base_action[1])  # 移动agent
+        self.canvas.move(self.rect, base_action[0], base_action[1])  # 实际移动agent
 
         s_ = self.canvas.coords(self.rect)  # 下一个状态
 
@@ -154,21 +152,19 @@ class Maze(tk.Tk, object):
             reward = 10  # 到达目标区域奖励为1
             done = True
             success = True
-            # s_ = 'terminal'
         elif s_ in [self.canvas.coords(self.hell1), self.canvas.coords(self.hell2), self.canvas.coords(self.hell3),
                     self.canvas.coords(self.hell4), self.canvas.coords(self.hell5), self.canvas.coords(self.hell6)]:
             reward = -1  # 掉入陷阱奖励为-1
             done = True
             success = False
-            # s_ = 'terminal'
-        # elif s in [self.canvas.coords(self.wind1), self.canvas.coords(self.wind2),
-        #             self.canvas.coords(self.wind3), self.canvas.coords(self.wind4),] and hit_wall:  # 如果s在风场区域向右撞墙
-        #     if random.random < 0.2:
-        #         reward = 0
-        #     else:
-        #         reward = -1
-        #     done = False
-        #     success = False
+        elif (s in [self.canvas.coords(self.wind1), self.canvas.coords(self.wind2),
+                    self.canvas.coords(self.wind3), self.canvas.coords(self.wind4)]) and hit_wall:  # 如果s在风场区域向右撞墙
+            if random.random() < 0.2:
+                reward = 0
+            else:
+                reward = -1
+            done = False
+            success = False
         elif hit_wall:
             reward = -1  # 碰壁奖励为-1
             done = False
